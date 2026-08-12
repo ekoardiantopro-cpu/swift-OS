@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Swift OS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="login-box">
+  <h2>Login Swift OS</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<script type="module">
+import { auth } from './firebase.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+window.login = async function() {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    location.href = "dashboard.html";
+  } catch(e) {
+    alert(e.message);
+  }
+}
+</script>
+</body>
+</html>

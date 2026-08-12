@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Swift POS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Swift OS</h2>
+    <button onclick="exportExcel()">Export</button>
+    <button onclick="logout()">Logout</button>
+  </aside>
+
+  <main class="main">
+    <input id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+
+    <div class="content">
+      <div id="product-list" class="products"></div>
+
+      <div class="cart">
+        <h3>Keranjang</h3>
+        <div id="cart-items"></div>
+        <h2>Total: <span id="total">0</span></h2>
+        <input id="bayar" type="number" placeholder="Bayar">
+        <button onclick="bayar()">Bayar</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
