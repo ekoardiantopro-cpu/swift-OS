@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Swift POS PRO</title>
-  <link rel="stylesheet" href="style.css">
+<title>SwiftOS POS</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="layout">
 
-  <div class="left">
-    <input class="search" id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
-    <div id="product-list" class="grid"></div>
-  </div>
+<div class="left">
+<input class="search" id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+<div id="product-list" class="grid"></div>
+</div>
 
-  <div class="right">
-    <h3>Kasir</h3>
+<div class="right">
+<h3>Kasir</h3>
 
-    <div id="adminPanel" style="display:none;">
-      <h4>Admin Panel</h4>
-      <input id="uid" placeholder="UID User">
-      <select id="role">
-        <option value="admin">Admin</option>
-        <option value="cashier">Kasir</option>
-      </select>
-      <button onclick="setRole(uid.value, role.value)">Update Role</button>
-    </div>
+<div id="adminPanel" style="display:none;">
+<h4>Admin Panel</h4>
+<input id="uid" placeholder="UID">
+<select id="role">
+<option value="admin">Admin</option>
+<option value="cashier">Kasir</option>
+</select>
+<button onclick="setRole(uid.value, role.value)">Update Role</button>
+</div>
 
-    <div id="cart-items" class="cart"></div>
+<button onclick="startScanner()">Scan Barcode</button>
+<div id="scanner"></div>
 
-    <h2>Total: Rp <span id="total">0</span></h2>
-    <input id="bayar" type="number" placeholder="Bayar">
+<div id="cart-items"></div>
 
-    <button class="pay" onclick="bayar()">CHARGE</button>
+<h2>Total: Rp <span id="total">0</span></h2>
+<button class="pay" onclick="bayar()">CHARGE</button>
 
-    <button onclick="logout()">Logout</button>
-  </div>
+<button onclick="logout()">Logout</button>
+</div>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
