@@ -9,13 +9,12 @@
 <div class="topbar">
 <img src="assets/logo.png" class="logo-small">
 <h2>SwiftOS</h2>
-<button onclick="logout()">Logout</button>
+<button id="logoutBtn" type="button">Logout</button>
 </div>
 
 <div class="layout">
-
 <div class="left">
-<input id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+<input id="search" placeholder="Cari produk..." autocomplete="off">
 <div id="product-list" class="grid"></div>
 </div>
 
@@ -23,11 +22,10 @@
 <h3>Kasir</h3>
 <div id="cart-items"></div>
 <div class="total-box">Rp <span id="total">0</span></div>
-<button class="btn primary" onclick="bayar()">CHARGE</button>
-<button class="btn" onclick="loadReport()">Laporan</button>
+<button id="chargeBtn" class="btn primary" type="button">CHARGE</button>
+<button id="reportBtn" class="btn" type="button">Laporan</button>
 <div id="report"></div>
 </div>
-
 </div>
 
 <script type="module" src="app.js"></script>

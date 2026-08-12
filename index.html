@@ -9,24 +9,89 @@
 <div class="login-card glass">
 <img src="assets/logo.png" class="logo-img">
 <h2>SwiftOS</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()" class="btn primary">Login</button>
+<input id="email" type="email" placeholder="Email" autocomplete="username">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<button id="loginBtn" type="button" class="btn primary">Login</button>
 <div id="loading" class="loader"></div>
 </div>
 
 <script type="module">
-import { auth } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { db, auth } from "./firebase.js";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-window.login = async ()=>{
- loading.style.display="block";
- try{
-  await signInWithEmailAndPassword(auth,email.value,password.value);
-  location.href="dashboard.html";
- }catch(e){alert(e.message);}
- loading.style.display="none";
+const emailEl = document.getElementById("email");
+const passwordEl = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const loading = document.getElementById("loading");
+
+let redirecting = false;
+
+async function redirectByRole(user) {
+  if (redirecting) return;
+  redirecting = true;
+
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+
+  if (!userSnap.exists()) {
+    throw new Error("Data user belum dibuat di Firestore. Buat users/" + user.uid + " dengan field role.");
+  }
+
+  const role = userSnap.data().role;
+
+  if (role === "admin") {
+    location.replace("admin.html");
+    return;
+  }
+
+  if (role === "cashier") {
+    location.replace("dashboard.html");
+    return;
+  }
+
+  throw new Error("Role tidak valid. Gunakan 'admin' atau 'cashier'.");
 }
+
+async function login() {
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+
+  if (!email || !password) {
+    alert("Email dan password wajib diisi.");
+    return;
+  }
+
+  loginBtn.disabled = true;
+  loading.style.display = "block";
+  redirecting = false;
+
+  try {
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    await redirectByRole(credential.user);
+  } catch (error) {
+    console.error(error);
+    alert(error.message || "Login gagal.");
+    loginBtn.disabled = false;
+    loading.style.display = "none";
+  }
+}
+
+loginBtn.addEventListener("click", login);
+
+passwordEl.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") login();
+});
+
+// Jika session Firebase masih aktif, arahkan sesuai role.
+onAuthStateChanged(auth, async (user) => {
+  if (!user || redirecting) return;
+
+  try {
+    await redirectByRole(user);
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 </body>

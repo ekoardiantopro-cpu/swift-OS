@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<title>Admin Panel - SwiftOS</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="topbar">
 <h2>Admin SwiftOS</h2>
-<button onclick="back()">Kasir</button>
+<div>
+<button id="cashierBtn" type="button">Kasir</button>
+<button id="logoutBtn" type="button">Logout</button>
+</div>
 </div>
 
 <div class="layout">
 <div class="sidebar">
-<button onclick="showProducts()">Produk</button>
-<button onclick="showReport()">Laporan</button>
+<button id="productsBtn" type="button">Produk</button>
+<button id="reportBtn" type="button">Laporan</button>
 </div>
 
 <div class="content" id="content"></div>

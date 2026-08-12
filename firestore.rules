@@ -23,14 +23,13 @@ service cloud.firestore {
     }
 
     // PRODUCTS
-    // Admin dapat mengelola produk.
-    // Kasir hanya dapat membaca produk dan mengurangi stok
-    // saat membuat transaksi.
     match /products/{id} {
       allow read: if isCashier();
 
       allow create: if isAdmin();
 
+      // Admin bebas mengubah produk.
+      // Kasir hanya boleh mengurangi stok.
       allow update: if isAdmin() ||
         (
           isCashier() &&
@@ -44,7 +43,6 @@ service cloud.firestore {
     }
 
     // TRANSACTIONS
-    // Transaksi tidak dapat diedit atau dihapus.
     match /transactions/{id} {
       allow read: if isAdmin();
       allow create: if isCashier();
