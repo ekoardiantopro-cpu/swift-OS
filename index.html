@@ -20,9 +20,7 @@ window.login = async () => {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
     location.href = "dashboard.html";
-  } catch(e){
-    alert(e.message);
-  }
+  } catch(e){ alert(e.message); }
 }
 </script>
 </body>

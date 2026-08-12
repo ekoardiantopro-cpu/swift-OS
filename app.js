@@ -6,7 +6,6 @@ import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 
 let products=[];
 let cart=[];
-let role="cashier";
 
 onAuthStateChanged(auth, async user=>{
  if(!user) return location.href="index.html";
@@ -16,13 +15,6 @@ onAuthStateChanged(auth, async user=>{
 
  if(!snap.exists()){
   await setDoc(ref,{email:user.email,role:"cashier"});
- }
-
- const data=(await getDoc(ref)).data();
- role=data.role;
-
- if(role==="admin"){
-  document.getElementById("adminPanel").style.display="block";
  }
 
  loadProductsRealtime();
@@ -56,7 +48,7 @@ window.searchProduct=()=>{
 
 window.add=id=>{
  const item=products.find(p=>p.id===id);
- cart.push({...item,qty:1});
+ cart.push({...item});
  renderCart();
 }
 
@@ -95,7 +87,7 @@ function printStruk(total){
 
 window.startScanner=()=>{
  Quagga.init({
-  inputStream:{type:"LiveStream",target:document.getElementById("scanner")},
+  inputStream:{type:"LiveStream",target:document.body},
   decoder:{readers:["code_128_reader","ean_reader"]}
  },()=>Quagga.start());
 
@@ -104,12 +96,6 @@ window.startScanner=()=>{
   let p=products.find(x=>x.barcode===code);
   if(p) add(p.id);
  });
-}
-
-window.setRole=async(uid,newRole)=>{
- if(role!=="admin") return alert("Ditolak");
- await updateDoc(doc(db,"users",uid),{role:newRole});
- alert("Updated");
 }
 
 window.logout=()=>signOut(auth);

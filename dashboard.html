@@ -14,27 +14,20 @@
 </div>
 
 <div class="right">
+
 <h3>Kasir</h3>
-
-<div id="adminPanel" style="display:none;">
-<h4>Admin Panel</h4>
-<input id="uid" placeholder="UID">
-<select id="role">
-<option value="admin">Admin</option>
-<option value="cashier">Kasir</option>
-</select>
-<button onclick="setRole(uid.value, role.value)">Update Role</button>
-</div>
-
-<button onclick="startScanner()">Scan Barcode</button>
-<div id="scanner"></div>
 
 <div id="cart-items"></div>
 
-<h2>Total: Rp <span id="total">0</span></h2>
+<div class="total-box">
+<h1>Rp <span id="total">0</span></h1>
+</div>
+
 <button class="pay" onclick="bayar()">CHARGE</button>
 
+<button onclick="startScanner()">📷 Scan</button>
 <button onclick="logout()">Logout</button>
+
 </div>
 
 </div>
