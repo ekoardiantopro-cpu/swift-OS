@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isLogin() {
+      return request.auth != null;
+    }
+
+    function userRole() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.role;
+    }
+
+    function isAdmin() {
+      return isLogin() && userRole() == "admin";
+    }
+
+    function isCashier() {
+      return isLogin() &&
+        (userRole() == "cashier" || userRole() == "admin");
+    }
+
+    // PRODUCTS
+    // Admin dapat mengelola produk.
+    // Kasir hanya dapat membaca produk dan mengurangi stok
+    // saat membuat transaksi.
+    match /products/{id} {
+      allow read: if isCashier();
+
+      allow create: if isAdmin();
+
+      allow update: if isAdmin() ||
+        (
+          isCashier() &&
+          request.resource.data.name == resource.data.name &&
+          request.resource.data.price == resource.data.price &&
+          request.resource.data.cost == resource.data.cost &&
+          request.resource.data.stock <= resource.data.stock
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // TRANSACTIONS
+    // Transaksi tidak dapat diedit atau dihapus.
+    match /transactions/{id} {
+      allow read: if isAdmin();
+      allow create: if isCashier();
+      allow update, delete: if false;
+    }
+
+    // USERS
+    match /users/{uid} {
+      allow read: if isLogin();
+      allow write: if isAdmin();
+    }
+  }
+}

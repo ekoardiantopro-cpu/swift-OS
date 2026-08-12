@@ -1,26 +1,22 @@
-body{margin:0;font-family:Segoe UI;background:#eef5fb}
-.login-bg{display:flex;height:100vh;justify-content:center;align-items:center;background:linear-gradient(135deg,#2D9CDB,#56CCF2)}
-.glass{backdrop-filter:blur(10px);background:rgba(255,255,255,0.2)}
-.login-card{padding:30px;border-radius:15px;text-align:center;color:white}
-.logo-img{width:100px;margin-bottom:10px}
+/* Existing SwiftOS styles can remain. These additions support the POS fixes. */
 
-.topbar{background:#2D9CDB;color:white;padding:10px;display:flex;justify-content:space-between}
-.logo-small{height:35px}
+.product {
+  cursor: pointer;
+}
 
-.layout{display:flex;height:calc(100vh - 60px)}
-.left{flex:2;padding:20px}
-.right{flex:1;background:white;padding:20px}
+.product.out-of-stock {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
 
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.product{background:white;padding:10px;border-radius:12px;cursor:pointer;transition:.2s}
-.product:hover{background:#2D9CDB;color:white}
+.admin-product {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 8px;
+}
 
-.total-box{background:#2D9CDB;color:white;padding:15px;border-radius:12px;margin:10px 0}
-
-.btn{padding:10px;border:none;border-radius:8px;cursor:pointer}
-.primary{background:#2D9CDB;color:white}
-
-.sidebar{width:200px;background:#2D9CDB;color:white;padding:20px}
-.content{flex:1;padding:20px}
-
-.loader{display:none;margin-top:10px}
+.admin-product button {
+  margin-right: 6px;
+  margin-top: 8px;
+}
