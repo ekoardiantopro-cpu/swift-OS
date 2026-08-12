@@ -3,32 +3,29 @@
 <head>
 <title>SwiftOS POS</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
+<div class="topbar">
+<img src="assets/logo.png" class="logo-small">
+<h2>SwiftOS</h2>
+<button onclick="logout()">Logout</button>
+</div>
 
 <div class="layout">
 
 <div class="left">
-<input id="search" placeholder="Cari..." onkeyup="searchProduct()">
-<select id="categoryFilter" onchange="filterCategory()"></select>
+<input id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
 <div id="product-list" class="grid"></div>
-<canvas id="chart"></canvas>
 </div>
 
 <div class="right">
 <h3>Kasir</h3>
 <div id="cart-items"></div>
-
-<div class="total-box">
-Rp <span id="total">0</span>
-</div>
-
-<input id="discount" placeholder="Diskon %" oninput="applyDiscount()">
-
-<button onclick="bayar()">CHARGE</button>
-<button onclick="exportExcel()">Export</button>
-<button onclick="printStruk()">Print</button>
+<div class="total-box">Rp <span id="total">0</span></div>
+<button class="btn primary" onclick="bayar()">CHARGE</button>
+<button class="btn" onclick="loadReport()">Laporan</button>
+<div id="report"></div>
 </div>
 
 </div>

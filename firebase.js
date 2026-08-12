@@ -1,8 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = {
+const firebaseConfig={
  apiKey:"AIzaSyDOcFyRMlIJxEcktcLePbygVaR5wfjjgF8",
  authDomain:"swift-os.firebaseapp.com",
  projectId:"swift-os",
@@ -12,5 +12,5 @@ const firebaseConfig = {
 };
 
 const app=initializeApp(firebaseConfig);
-export const auth=getAuth(app);
 export const db=getFirestore(app);
+export const auth=getAuth(app);
