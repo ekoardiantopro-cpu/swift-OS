@@ -1,85 +1,83 @@
 import { db, auth } from './firebase.js';
-import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+ collection, addDoc, doc, getDoc, setDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-let products = [];
+let products = [
+ {id:"1",name:"Indomie",price:3000},
+ {id:"2",name:"Aqua",price:5000},
+ {id:"3",name:"Teh Botol",price:4000}
+];
+
 let cart = [];
+let role="cashier";
 
-async function loadProducts(){
-  const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1v/pub?output=csv");
-  const text = await res.text();
-  const rows = text.split("\n").slice(1);
+onAuthStateChanged(auth, async user=>{
+ if(!user) return location.href="index.html";
 
-  products = rows.map(r=>{
-    const [id,name,price,stock,barcode]=r.split(",");
-    return {id,name,price:+price,stock:+stock,barcode};
-  });
+ const ref = doc(db,"users",user.uid);
+ const snap = await getDoc(ref);
 
-  renderProducts(products);
-}
+ if(!snap.exists()){
+   await setDoc(ref,{email:user.email,role:"cashier"});
+ }
+
+ const data=(await getDoc(ref)).data();
+ role=data.role;
+
+ if(role==="admin"){
+   document.getElementById("adminPanel").style.display="block";
+ }
+
+ renderProducts(products);
+});
 
 function renderProducts(list){
-  const el = document.getElementById("product-list");
-  el.innerHTML="";
-  list.forEach(p=>{
-    el.innerHTML+=`
-    <div class="product" onclick="addToCart('${p.id}')">
-      <h4>${p.name}</h4>
-      <p>Rp ${p.price}</p>
-    </div>`;
-  });
+ const el=document.getElementById("product-list");
+ el.innerHTML="";
+ list.forEach(p=>{
+  el.innerHTML+=`<div class="product" onclick="add('${p.id}')">
+  <h4>${p.name}</h4><p>${p.price}</p></div>`;
+ });
 }
 
 window.searchProduct=()=>{
-  const key=document.getElementById("search").value.toLowerCase();
-  renderProducts(products.filter(p=>p.name.toLowerCase().includes(key)));
+ const key=search.value.toLowerCase();
+ renderProducts(products.filter(p=>p.name.toLowerCase().includes(key)));
 }
 
-window.addToCart=id=>{
-  const item=products.find(p=>p.id===id);
-  cart.push({...item,qty:1});
-  renderCart();
+window.add=id=>{
+ const item=products.find(p=>p.id===id);
+ cart.push(item);
+ renderCart();
 }
 
 function renderCart(){
-  let total=0;
-  const el=document.getElementById("cart-items");
-  el.innerHTML="";
-  cart.forEach(c=>{
-    total+=c.price;
-    el.innerHTML+=`<p>${c.name}</p>`;
-  });
-  document.getElementById("total").innerText=total;
+ let total=0;
+ cart-items.innerHTML="";
+ cart.forEach(c=>{
+  total+=c.price;
+  cart-items.innerHTML+=`<p>${c.name}</p>`;
+ });
+ total.innerText=total;
 }
 
 window.bayar=async()=>{
-  const totalVal=parseInt(document.getElementById("total").innerText);
-  const bayarVal=parseInt(document.getElementById("bayar").value);
-
-  if(bayarVal<totalVal) return alert("Uang kurang");
-
-  await addDoc(collection(db,"transactions"),{
-    items:cart,total:totalVal,date:new Date()
-  });
-
-  alert("Transaksi berhasil");
-  cart=[];
-  renderCart();
+ const totalVal=parseInt(total.innerText);
+ await addDoc(collection(db,"transactions"),{
+  total:totalVal,
+  user:auth.currentUser.uid,
+  date:new Date()
+ });
+ alert("Sukses");
+ cart=[]; renderCart();
 }
 
-window.exportExcel=async()=>{
-  const snap=await getDocs(collection(db,"transactions"));
-  let data=[];
-  snap.forEach(d=>data.push(d.data()));
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Data");
-  XLSX.writeFile(wb, "laporan.xlsx");
+window.setRole=async(uid,newRole)=>{
+ if(role!=="admin") return alert("Ditolak");
+ await updateDoc(doc(db,"users",uid),{role:newRole});
+ alert("Updated");
 }
 
-window.logout=()=>{
-  signOut(auth);
-  location.href="index.html";
-}
-
-loadProducts();
+window.logout=()=>signOut(auth);

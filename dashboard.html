@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Swift POS</title>
-<link rel="stylesheet" href="style.css">
+  <title>Swift POS PRO</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="layout">
-  <aside class="sidebar">
-    <h2>Swift OS</h2>
-    <button onclick="exportExcel()">Export</button>
-    <button onclick="logout()">Logout</button>
-  </aside>
 
-  <main class="main">
-    <input id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+  <div class="left">
+    <input class="search" id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+    <div id="product-list" class="grid"></div>
+  </div>
 
-    <div class="content">
-      <div id="product-list" class="products"></div>
+  <div class="right">
+    <h3>Kasir</h3>
 
-      <div class="cart">
-        <h3>Keranjang</h3>
-        <div id="cart-items"></div>
-        <h2>Total: <span id="total">0</span></h2>
-        <input id="bayar" type="number" placeholder="Bayar">
-        <button onclick="bayar()">Bayar</button>
-      </div>
+    <div id="adminPanel" style="display:none;">
+      <h4>Admin Panel</h4>
+      <input id="uid" placeholder="UID User">
+      <select id="role">
+        <option value="admin">Admin</option>
+        <option value="cashier">Kasir</option>
+      </select>
+      <button onclick="setRole(uid.value, role.value)">Update Role</button>
     </div>
-  </main>
+
+    <div id="cart-items" class="cart"></div>
+
+    <h2>Total: Rp <span id="total">0</span></h2>
+    <input id="bayar" type="number" placeholder="Bayar">
+
+    <button class="pay" onclick="bayar()">CHARGE</button>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
