@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SwiftOS POS Login</title>
-  <link rel="stylesheet" href="style.css">
+<title>SwiftOS POS</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body class="center">
-<div class="login-box">
-  <h2>SwiftOS POS</h2>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+<body class="login-bg">
+
+<div class="login-card glass">
+<img src="assets/logo.png" class="logo-img">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 </div>
 
 <script type="module">
@@ -17,11 +18,12 @@ import { auth } from './firebase.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 window.login = async () => {
-  try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-    location.href = "dashboard.html";
-  } catch(e){ alert(e.message); }
+ try{
+  await signInWithEmailAndPassword(auth,email.value,password.value);
+  location.href="dashboard.html";
+ }catch(e){alert(e.message);}
 }
 </script>
+
 </body>
 </html>

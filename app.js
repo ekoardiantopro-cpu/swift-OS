@@ -1,101 +1,81 @@
 import { db, auth } from './firebase.js';
-import {
- collection, addDoc, doc, getDoc, setDoc, updateDoc, increment, onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { collection,onSnapshot,addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-let products=[];
-let cart=[];
+let products=[],cart=[],total=0;
 
-onAuthStateChanged(auth, async user=>{
- if(!user) return location.href="index.html";
-
- const ref=doc(db,"users",user.uid);
- const snap=await getDoc(ref);
-
- if(!snap.exists()){
-  await setDoc(ref,{email:user.email,role:"cashier"});
- }
-
- loadProductsRealtime();
+onSnapshot(collection(db,"products"),snap=>{
+ products=[];
+ snap.forEach(d=>products.push({id:d.id,...d.data()}));
+ render(products);
+ loadChart();
 });
 
-function loadProductsRealtime(){
- onSnapshot(collection(db,"products"), (snapshot)=>{
-  products=[];
-  snapshot.forEach(doc=>{
-    products.push({id:doc.id,...doc.data()});
-  });
-  renderProducts(products);
- });
-}
-
-function renderProducts(list){
- const el=document.getElementById("product-list");
- el.innerHTML="";
+function render(list){
+ let el=document.getElementById("product-list");el.innerHTML="";
  list.forEach(p=>{
   el.innerHTML+=`<div class="product" onclick="add('${p.id}')">
-    <h4>${p.name}</h4>
-    <p>Rp ${p.price}</p>
+  <img src="${p.image||''}">
+  <h4>${p.name}</h4>
+  <p>Rp ${p.price}</p>
   </div>`;
  });
 }
 
 window.searchProduct=()=>{
- const key=search.value.toLowerCase();
- renderProducts(products.filter(p=>p.name.toLowerCase().includes(key)));
+ let k=search.value.toLowerCase();
+ render(products.filter(p=>p.name.toLowerCase().includes(k)));
 }
 
 window.add=id=>{
- const item=products.find(p=>p.id===id);
- cart.push({...item});
- renderCart();
+ let p=products.find(x=>x.id===id);
+ let exist=cart.find(x=>x.id===id);
+ if(exist) exist.qty++;
+ else cart.push({...p,qty:1});
+ draw();
 }
 
-function renderCart(){
- let total=0;
- document.getElementById("cart-items").innerHTML="";
+function draw(){
+ total=0;
+ cart-items.innerHTML="";
  cart.forEach(c=>{
-  total+=c.price;
-  document.getElementById("cart-items").innerHTML+=`<p>${c.name}</p>`;
+  total+=c.price*c.qty;
+  cart-items.innerHTML+=`<p>${c.name} x${c.qty}</p>`;
  });
  document.getElementById("total").innerText=total;
 }
 
+window.applyDiscount=()=>{
+ let d=parseInt(discount.value||0);
+ let t=total-(total*d/100);
+ document.getElementById("total").innerText=parseInt(t);
+}
+
 window.bayar=async()=>{
- let total=parseInt(document.getElementById("total").innerText);
-
- await addDoc(collection(db,"transactions"),{
-  items:cart,total,user:auth.currentUser.uid,date:new Date()
- });
-
- for(let item of cart){
-  await updateDoc(doc(db,"products",item.id),{
-    stock:increment(-1)
-  });
- }
-
- printStruk(total);
- cart=[];renderCart();
+ await addDoc(collection(db,"transactions"),{items:cart,total:total});
+ alert("Sukses");
+ cart=[];draw();
 }
 
-function printStruk(total){
- let w=window.open("");
- w.document.write("<h3>SwiftOS</h3><p>Total:"+total+"</p>");
- w.print();
+window.exportExcel=()=>{
+ let csv="Nama,Qty\n";
+ cart.forEach(c=>csv+=`${c.name},${c.qty}\n`);
+ let blob=new Blob([csv]);
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="laporan.csv";
+ a.click();
 }
 
-window.startScanner=()=>{
- Quagga.init({
-  inputStream:{type:"LiveStream",target:document.body},
-  decoder:{readers:["code_128_reader","ean_reader"]}
- },()=>Quagga.start());
+window.printStruk=()=>{
+ window.print();
+}
 
- Quagga.onDetected(res=>{
-  let code=res.codeResult.code;
-  let p=products.find(x=>x.barcode===code);
-  if(p) add(p.id);
+function loadChart(){
+ let data={};
+ products.forEach(p=>data[p.name]=p.stock);
+
+ new Chart(document.getElementById("chart"),{
+  type:'bar',
+  data:{labels:Object.keys(data),datasets:[{data:Object.values(data)}]}
  });
 }
-
-window.logout=()=>signOut(auth);

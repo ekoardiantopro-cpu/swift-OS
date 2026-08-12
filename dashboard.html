@@ -3,36 +3,36 @@
 <head>
 <title>SwiftOS POS</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="layout">
 
 <div class="left">
-<input class="search" id="search" placeholder="Cari produk..." onkeyup="searchProduct()">
+<input id="search" placeholder="Cari..." onkeyup="searchProduct()">
+<select id="categoryFilter" onchange="filterCategory()"></select>
 <div id="product-list" class="grid"></div>
+<canvas id="chart"></canvas>
 </div>
 
 <div class="right">
-
 <h3>Kasir</h3>
-
 <div id="cart-items"></div>
 
 <div class="total-box">
-<h1>Rp <span id="total">0</span></h1>
+Rp <span id="total">0</span>
 </div>
 
-<button class="pay" onclick="bayar()">CHARGE</button>
+<input id="discount" placeholder="Diskon %" oninput="applyDiscount()">
 
-<button onclick="startScanner()">📷 Scan</button>
-<button onclick="logout()">Logout</button>
-
+<button onclick="bayar()">CHARGE</button>
+<button onclick="exportExcel()">Export</button>
+<button onclick="printStruk()">Print</button>
 </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
